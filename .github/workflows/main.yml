@@ -17,9 +17,12 @@ jobs:
       uses: actions/setup-node@v3
     
     - name: Change to project directory
+      run: cd mon-projet-next
+
+    - name: Change to project directory
       run: cd epsilon
     
-    - name: Check directory
+    - name: Check directory bf
       run: ls -la
 
     - name: Install dependencies
