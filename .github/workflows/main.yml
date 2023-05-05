@@ -30,5 +30,6 @@ jobs:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |
-          scp -P $DEPLOY_PORT -r ./epsilon/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+          scp -i $DEPLOY_KEY -P $DEPLOY_PORT -r ./epsilon/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
