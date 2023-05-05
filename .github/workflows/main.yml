@@ -20,15 +20,27 @@ jobs:
         working-directory: ./epsilon
         run: npm ci
 
+      - name: Download artifact
+        uses: actions/download-artifact@master
+        with:
+          name: bundle
+          path: ./epsilon
+
       - name: Build project
         working-directory: ./epsilon
         run: npm run build
 
       - name: Deploy project with SSH to Webcup server
-        uses: easingthemes/ssh-deploy@v2.1.4
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
-          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
-          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
-          TARGET: ${{ secrets.DEPLOY_PATH }}
-          SOURCE: ./epsilon
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          echo "$DEPLOY_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          mkdir -p ~/.ssh
+          ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
+          scp -i private_key.pem -P $DEPLOY_PORT -r ./epsilon/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+          rm -f private_key.pem
