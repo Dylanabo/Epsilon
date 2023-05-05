@@ -16,13 +16,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
 
-      - name: Change to project directory
-        run: cd epsilon
-
       - name: Install dependencies
+        working-directory: ./epsilon
         run: npm ci
 
       - name: Build project
+        working-directory: ./epsilon
         run: npm run build
 
       - name: Deploy to Webcup server
