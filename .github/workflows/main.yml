@@ -26,23 +26,18 @@ jobs:
 
       - name: Write SSH keys
         run: |
-          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           host="${{ secrets.DEPLOY_HOST }}"
           hosts="$(dig +short "$host" | grep -v '\.$' | sed -z 's|\n|,|g')$host"
           ssh-keyscan -H "$hosts" > ~/.ssh/known_hosts
 
       - name: Deploy project with SSH to Webcup server
         env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          echo "$DEPLOY_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          mkdir -p ~/.ssh
-          ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
-          scp -i private_key.pem -P $DEPLOY_PORT -r ./epsilon/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
-          rm -f private_key.pem
+          scp -P $DEPLOY_PORT -r ./epsilon/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
