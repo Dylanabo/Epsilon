@@ -26,6 +26,12 @@ jobs:
       working-directory: epsilon
       run: npm run build
 
+    - name: Add remote host to known_hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+
     - name: Deploy to Webcup server
       env:
         DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
@@ -38,3 +44,4 @@ jobs:
         chmod 600 private_key.pem
         scp -i private_key.pem -P $DEPLOY_PORT -r ./out/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
         rm -f private_key.pem
+
