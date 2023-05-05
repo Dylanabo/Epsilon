@@ -24,15 +24,11 @@ jobs:
         working-directory: ./epsilon
         run: npm run build
 
-      - name: Deploy to Webcup server
+      - name: Deploy project with SSH to Webcup server
+        uses: easingthemes/ssh-deploy@v2.1.4
         env:
-          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-        run: |
-          echo "$DEPLOY_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          scp -i private_key.pem -P $DEPLOY_PORT -r ./out/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
-          rm -f private_key.pem
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+          SOURCE: ./epsilon
