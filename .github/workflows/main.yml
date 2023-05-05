@@ -34,5 +34,5 @@ jobs:
         run: |
           echo "$DEPLOY_KEY" > private_key.pem
           chmod 600 private_key.pem
-          scp -i private_key.pem -P $DEPLOY_PORT -o StrictHostKeyChecking=no -r ./out/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+          scp -i private_key.pem -P $DEPLOY_PORT -r ./out/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
           rm -f private_key.pem
