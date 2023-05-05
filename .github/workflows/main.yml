@@ -25,6 +25,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Webcup server
+        working-directory: ./epsilon
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
