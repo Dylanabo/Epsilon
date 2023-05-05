@@ -28,8 +28,7 @@ jobs:
 
     - name: Add remote host to known_hosts
       run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.DEPLOY_HOST }} $(ssh-keyscan -H ${{ secrets.DEPLOY_HOST }})" >> /etc/ssh/ssh_known_hosts
 
 
     - name: Deploy to Webcup server
