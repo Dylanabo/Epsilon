@@ -20,12 +20,6 @@ jobs:
         working-directory: ./epsilon
         run: npm ci
 
-      - name: Download artifact
-        uses: actions/download-artifact@master
-        with:
-          name: bundle
-          path: ./epsilon
-
       - name: Build project
         working-directory: ./epsilon
         run: npm run build
