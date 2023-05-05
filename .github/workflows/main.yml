@@ -16,7 +16,6 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
 
-    
     - name: Install dependencies
       working-directory: epsilon
       run: npm ci
@@ -28,8 +27,8 @@ jobs:
 
     - name: Add remote host to known_hosts
       run: |
-        echo "${{ secrets.DEPLOY_HOST }} $(ssh-keyscan -H ${{ secrets.DEPLOY_HOST }})" >> /etc/ssh/ssh_known_hosts
-
+        mkdir -p ~/.ssh
+        echo "${{ secrets.DEPLOY_HOST }} $(ssh-keyscan -H ${{ secrets.DEPLOY_HOST }})" >> ~/.ssh/known_hosts
 
     - name: Deploy to Webcup server
       env:
