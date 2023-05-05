@@ -27,11 +27,11 @@ jobs:
       - name: Write SSH keys
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.DEPLOY_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           host="${{ secrets.DEPLOY_HOST }}"
           hosts="$(dig +short "$host" | grep -v '\.$' | sed -z 's|\n|,|g')$host"
-          ssh-keyscan -H "$hosts" > ~/.ssh/known_hosts
+          ssh-keyscan -H "$hosts" > ~/.ssh/known_hosts || echo "Failed to add known hosts"
 
       - name: Deploy project with SSH to Webcup server
         env:
