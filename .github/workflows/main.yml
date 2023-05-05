@@ -33,6 +33,9 @@ jobs:
           hosts="$(dig +short "$host" | grep -v '\.$' | sed -z 's|\n|,|g')$host"
           ssh-keyscan -H "$hosts" > ~/.ssh/known_hosts || echo "Failed to add known hosts"
 
+      - name: List directory contents
+        run: ls -la
+
       - name: Deploy project with SSH to Webcup server
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
