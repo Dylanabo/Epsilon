@@ -34,6 +34,7 @@ jobs:
         run: |
           echo "$DEPLOY_KEY" > private_key.pem
           chmod 600 private_key.pem
+          ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
           ssh -vvv -i private_key.pem -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_HOST "echo 'SSH connection test'"
           scp -i private_key.pem -P $DEPLOY_PORT -r ./out/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
           rm -f private_key.pem
