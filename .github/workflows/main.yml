@@ -3,43 +3,37 @@ name: Deploy to Webcup server
 on:
   push:
     branches:
-      - main # Change this to the branch you want to deploy from
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
 
-    - name: Install dependencies
-      working-directory: epsilon
-      run: npm ci
+      - name: Change to project directory
+        run: cd epsilon
 
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build project
-      working-directory: epsilon
-      run: npm run build
+      - name: Build project
+        run: npm run build
 
-    - name: Add remote host to known_hosts
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.DEPLOY_HOST }} $(ssh-keyscan -H ${{ secrets.DEPLOY_HOST }})" >> ~/.ssh/known_hosts
-
-    - name: Deploy to Webcup server
-      env:
-        DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-        DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-        DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
-        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-        DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-      run: |
-        echo "$DEPLOY_KEY" > private_key.pem
-        chmod 600 private_key.pem
-        scp -i private_key.pem -P $DEPLOY_PORT -r ./out/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
-        rm -f private_key.pem
-
+      - name: Deploy to Webcup server
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          echo "$DEPLOY_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -P $DEPLOY_PORT -o StrictHostKeyChecking=no -r ./out/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+          rm -f private_key.pem
