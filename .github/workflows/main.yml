@@ -24,12 +24,20 @@ jobs:
         working-directory: ./epsilon
         run: npm run build
 
+      - name: Write SSH keys
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          host="${{ secrets.DEPLOY_HOST }}"
+          hosts="$(dig +short "$host" | grep -v '\.$' | sed -z 's|\n|,|g')$host"
+          ssh-keyscan -H "$hosts" > ~/.ssh/known_hosts
+
       - name: Deploy project with SSH to Webcup server
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |
-          scp -i $DEPLOY_KEY -P $DEPLOY_PORT -r ./epsilon/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+          scp -i ~/.ssh/id_rsa -P $DEPLOY_PORT -r ./epsilon/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
